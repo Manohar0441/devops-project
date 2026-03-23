@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3002:3002"
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3003:3003"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3005:3000"
+    depends_on:
+      - auth-service
+      - user-service
+      - order-service

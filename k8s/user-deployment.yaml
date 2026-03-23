@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: user
+
+  template:
+    metadata:
+      labels:
+        app: user
+
+    spec:
+      containers:
+        - name: user
+          image: user-service:v2
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3002
