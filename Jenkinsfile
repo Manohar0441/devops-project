@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Build Auth Service') {
             steps {
                 sh "docker build -t ${DOCKER_HUB}/auth-service:${IMAGE_TAG} ./auth-service"
@@ -28,7 +27,10 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
-                sh "docker build -t ${DOCKER_HUB}/frontend:${IMAGE_TAG} -f frontend/Dockerfile frontend"
+                // Using dir() ensures we are in the correct folder so Docker finds the Dockerfile
+                dir('frontend') {
+                    sh "docker build -t ${DOCKER_HUB}/frontend:${IMAGE_TAG} ."
+                }
             }
         }
 
@@ -36,7 +38,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh """
-                    echo \$PASS | docker login -u \$USER --password-stdin
+                    echo "${PASS}" | docker login -u "${USER}" --password-stdin
                     docker push ${DOCKER_HUB}/auth-service:${IMAGE_TAG}
                     docker push ${DOCKER_HUB}/user-service:${IMAGE_TAG}
                     docker push ${DOCKER_HUB}/order-service:${IMAGE_TAG}
@@ -48,10 +50,17 @@ pipeline {
 
         stage('Deploy to K8s') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh "kubectl apply -f k8s/"
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                    // Exporting the KUBECONFIG variable ensures kubectl knows which cluster to use
+                    sh "export KUBECONFIG=${KUBECONFIG_FILE} && kubectl apply -f k8s/"
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            sh "docker logout"
         }
     }
 }
