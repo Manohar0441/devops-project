@@ -8,12 +8,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/your-username/your-repo.git'
-            }
-        }
-
         stage('Build Backend') {
             steps {
                 sh 'docker build -t $DOCKER_HUB/backend:$IMAGE_TAG ./backend'
