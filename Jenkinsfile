@@ -8,12 +8,29 @@ pipeline {
 
     stages {
 
-        stage('Build Backend') {
-            steps {
-                sh 'docker build -t $DOCKER_HUB/backend:$IMAGE_TAG ./backend'
-            }
-        }
+        stage('Build Auth Service') {
+    steps {
+        sh 'docker build -t $DOCKER_HUB/auth-service:$IMAGE_TAG ./auth-service'
+    }
+}
 
+stage('Build User Service') {
+    steps {
+        sh 'docker build -t $DOCKER_HUB/user-service:$IMAGE_TAG ./user-service'
+    }
+}
+
+stage('Build Order Service') {
+    steps {
+        sh 'docker build -t $DOCKER_HUB/order-service:$IMAGE_TAG ./order-service'
+    }
+}
+
+stage('Build Frontend') {
+    steps {
+        sh 'docker build -t $DOCKER_HUB/frontend:$IMAGE_TAG ./frontend'
+    }
+}
         stage('Build Frontend') {
             steps {
                 sh 'docker build -t $DOCKER_HUB/frontend:$IMAGE_TAG ./frontend'
@@ -24,8 +41,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh 'docker push $DOCKER_HUB/backend:$IMAGE_TAG'
-                    sh 'docker push $DOCKER_HUB/frontend:$IMAGE_TAG'
+                    docker push $DOCKER_HUB/auth-service:$IMAGE_TAG
+                    docker push $DOCKER_HUB/user-service:$IMAGE_TAG
+                    docker push $DOCKER_HUB/order-service:$IMAGE_TAG
+                    docker push $DOCKER_HUB/frontend:$IMAGE_TAG 
                 }
             }
         }
