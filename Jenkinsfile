@@ -29,6 +29,7 @@ pipeline {
             steps {
                 // Using dir() ensures we are in the correct folder so Docker finds the Dockerfile
                 dir('frontend') {
+                    sh "ls -la"
                     sh "docker build -t ${DOCKER_HUB}/frontend:${IMAGE_TAG} ."
                 }
             }
