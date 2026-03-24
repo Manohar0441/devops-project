@@ -55,28 +55,25 @@ pipeline {
             }
         }
 
-       stage('Deploy to K8s') {
+    stage('Deploy to K8s') {
     agent {
         docker { 
-            image 'bitnami/kubectl:latest'
+            image 'lachlanevenson/k8s-kubectl:latest'
             args '-u root --network host'
         }
     }
     steps {
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                    sh '''
-                    echo "Checking kubeconfig..."
-                    ls -la $KUBECONFIG_FILE
+            sh '''
+            echo "Testing cluster..."
+            kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
 
-                    echo "Testing cluster connection..."
-                    kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
-
-                    echo "Deploying..."
-                    kubectl --kubeconfig=$KUBECONFIG_FILE apply -f .
-                    '''
-                }
-            }
-       }
+            echo "Deploying..."
+            kubectl --kubeconfig=$KUBECONFIG_FILE apply -f .
+            '''
+        }
+    }
+}
     }
 
     post {
