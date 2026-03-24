@@ -7,6 +7,12 @@ pipeline {
     }
 
     stages {
+
+        stage('Test Docker') {
+         steps {
+                sh 'docker version'
+             }
+        }       
         stage('Build Auth Service') {
             steps {
                 sh "docker build -t ${DOCKER_HUB}/auth-service:${IMAGE_TAG} ./auth-service"
