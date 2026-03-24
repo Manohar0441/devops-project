@@ -11,7 +11,13 @@ pipeline {
     }
 
     stages {
-
+        stages {
+        stage('Test') {
+            steps {
+                echo "Webhook working"
+            }
+        }
+         }
         stage('Test Docker') {
          steps {
                 sh 'docker version'
