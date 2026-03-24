@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     environment {
         DOCKER_HUB = "manoharn0441"
         IMAGE_TAG = "latest"
