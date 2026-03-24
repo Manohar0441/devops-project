@@ -55,21 +55,28 @@ pipeline {
             }
         }
 
-        stage('Deploy to K8s') {
-            agent {
-                docker { 
-                    image 'bitnami/kubectl:latest'
-                    // This ensures the container runs as the Jenkins user to avoid permission issues
-                    args '-u root' 
-                }
-            }
-            steps {
-                // Ensure the credentialsId matches exactly what you created in Jenkins
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                    sh "kubectl --kubeconfig=${KUBECONFIG_FILE} apply -f k8s/"
-                }
-            }
+       stage('Deploy to K8s') {
+    agent {
+        docker { 
+            image 'bitnami/kubectl:latest'
+            args '-u root --network host'
         }
+    }
+    steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                    sh '''
+                    echo "Checking kubeconfig..."
+                    ls -la $KUBECONFIG_FILE
+
+                    echo "Testing cluster connection..."
+                    kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
+
+                    echo "Deploying..."
+                    kubectl --kubeconfig=$KUBECONFIG_FILE apply -f .
+                    '''
+                }
+            }
+       }
     }
 
     post {
