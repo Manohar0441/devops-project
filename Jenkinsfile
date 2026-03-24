@@ -55,16 +55,21 @@ pipeline {
             }
         }
 
-    stage('Deploy to K8s') {
+stage('Deploy to K8s') {
     agent {
         docker { 
             image 'lachlanevenson/k8s-kubectl:latest'
-            args '-u root --network host'
+            args '-u root --network host --entrypoint=""'
         }
     }
     steps {
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
             sh '''
+            echo "Starting kubectl container..."
+
+            # Keep container alive workaround
+            sleep 5
+
             echo "Testing cluster..."
             kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
 
