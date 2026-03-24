@@ -1,0 +1,1828 @@
+Started by user M
+Obtained Jenkinsfile from git https://github.com/Manohar0441/devops-project.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/devops-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: git
+using credential github-creds
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/devops-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Manohar0441/devops-project.git # timeout=10
+Fetching upstream changes from https://github.com/Manohar0441/devops-project.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub Access
+ > git fetch --tags --force --progress -- https://github.com/Manohar0441/devops-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision dc5dbb6bc25cdaa88e001045d66a0e52c9317698 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f dc5dbb6bc25cdaa88e001045d66a0e52c9317698 # timeout=10
+Commit message: "Successfully converted frontend to a normal folder"
+ > git rev-list --no-walk dc5dbb6bc25cdaa88e001045d66a0e52c9317698 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Build Auth Service)
+[Pipeline] sh
++ docker build -t manoharn0441/auth-service:latest ./auth-service
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 282B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18
+#2 DONE 2.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783
+#4 resolve docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783 0.1s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 39.58kB 0.1s done
+#5 DONE 0.1s
+
+#6 [4/5] RUN npm install
+#6 CACHED
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package*.json ./
+#8 CACHED
+
+#9 [5/5] COPY . .
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:ae5691c0bfb1c07a68cd6554620a8bb4490cac02cd10d7d9d1d7797c63dbd2ca 0.0s done
+#10 exporting config sha256:e8e2a803215f1046fdfbde966eb877e76039cbf2b8425fd20f729d4780b2469b 0.0s done
+#10 exporting attestation manifest sha256:f2277c04595a1c24c324addd5ca96584185d9fbcf433926ca6ace9b6e4caf1cf
+#10 exporting attestation manifest sha256:f2277c04595a1c24c324addd5ca96584185d9fbcf433926ca6ace9b6e4caf1cf 0.1s done
+#10 exporting manifest list sha256:8abeff187115648e51d084b4ed6f5c0cc5ed1fd6802da6cea8550c62ba38112a 0.0s done
+#10 naming to docker.io/manoharn0441/auth-service:latest
+#10 naming to docker.io/manoharn0441/auth-service:latest done
+#10 unpacking to docker.io/manoharn0441/auth-service:latest 0.0s done
+#10 DONE 0.3s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build User Service)
+[Pipeline] sh
++ docker build -t manoharn0441/user-service:latest ./user-service
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 148B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:18
+#2 DONE 0.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 39.58kB 0.1s done
+#4 DONE 0.1s
+
+#5 [1/5] FROM docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783
+#5 resolve docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783 0.1s done
+#5 DONE 0.1s
+
+#6 [2/5] WORKDIR /app
+#6 CACHED
+
+#7 [3/5] COPY package*.json ./
+#7 CACHED
+
+#8 [4/5] RUN npm install
+#8 CACHED
+
+#9 [5/5] COPY . .
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:ba40be148131e3908d0ceb3a69e96a72ce8320e4290308415972e46472a2ecf5 0.0s done
+#10 exporting config sha256:99f7c9d258c8a415f80d903454da7e0495db6d43a9d7e9100e7ec43783846377
+#10 exporting config sha256:99f7c9d258c8a415f80d903454da7e0495db6d43a9d7e9100e7ec43783846377 done
+#10 exporting attestation manifest sha256:8370fe952ebfd70a6d5c964c0cb34eb065cf7b0fcf17014560f615dbf32bbf06 0.1s done
+#10 exporting manifest list sha256:8832938bf05954d7598b93f5d43e6a293a13d4639f277fefbcbfce9f0230fd7f
+#10 exporting manifest list sha256:8832938bf05954d7598b93f5d43e6a293a13d4639f277fefbcbfce9f0230fd7f 0.1s done
+#10 naming to docker.io/manoharn0441/user-service:latest done
+#10 unpacking to docker.io/manoharn0441/user-service:latest 0.0s done
+#10 DONE 0.4s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Order Service)
+[Pipeline] sh
++ docker build -t manoharn0441/order-service:latest ./order-service
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 148B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 39.58kB 0.1s done
+#4 DONE 0.1s
+
+#5 [1/5] FROM docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783
+#5 resolve docker.io/library/node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783 0.1s done
+#5 DONE 0.1s
+
+#6 [4/5] RUN npm install
+#6 CACHED
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package*.json ./
+#8 CACHED
+
+#9 [5/5] COPY . .
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:1a691c5dfdfc6f2bf22927faed2371332dc171b08cde9a0b86e66806c924dfa8 0.0s done
+#10 exporting config sha256:c340b15a4bf3986db281e551cf6a40578d3a05c32254194acbacf5cd97602b92 done
+#10 exporting attestation manifest sha256:3c8fa396aabf22be5b2bcc5b78fa1b7e90275222ba11a3d502d87226a1601951
+#10 exporting attestation manifest sha256:3c8fa396aabf22be5b2bcc5b78fa1b7e90275222ba11a3d502d87226a1601951 0.1s done
+#10 exporting manifest list sha256:56088fec1ef2662425d649bcc036d6ee8be053b43269d7929fbab76d130f92db 0.0s done
+#10 naming to docker.io/manoharn0441/order-service:latest done
+#10 unpacking to docker.io/manoharn0441/order-service:latest
+#10 unpacking to docker.io/manoharn0441/order-service:latest 0.0s done
+#10 DONE 0.3s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Frontend)
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/devops-pipeline/frontend
+[Pipeline] {
+[Pipeline] sh
++ ls -la
+total 288
+drwxr-xr-x 4 jenkins jenkins   4096 Mar 23 12:14 .
+drwxr-xr-x 9 jenkins jenkins   4096 Mar 23 12:14 ..
+-rw-r--r-- 1 jenkins jenkins    480 Mar 23 12:14 .gitignore
+-rw-r--r-- 1 jenkins jenkins    130 Mar 23 12:14 Dockerfile
+-rw-r--r-- 1 jenkins jenkins   1450 Mar 23 12:14 README.md
+drwxr-xr-x 2 jenkins jenkins   4096 Mar 23 12:14 app
+-rw-r--r-- 1 jenkins jenkins    465 Mar 23 12:14 eslint.config.mjs
+-rw-r--r-- 1 jenkins jenkins    375 Mar 23 12:14 frontend-deployment.yaml
+-rw-r--r-- 1 jenkins jenkins    190 Mar 23 12:14 frontend-service.yaml
+-rw-r--r-- 1 jenkins jenkins    133 Mar 23 12:14 next.config.ts
+-rw-r--r-- 1 jenkins jenkins 233721 Mar 23 12:14 package-lock.json
+-rw-r--r-- 1 jenkins jenkins    587 Mar 23 12:14 package.json
+-rw-r--r-- 1 jenkins jenkins     94 Mar 23 12:14 postcss.config.mjs
+drwxr-xr-x 2 jenkins jenkins   4096 Mar 23 12:14 public
+-rw-r--r-- 1 jenkins jenkins    666 Mar 23 12:14 tsconfig.json
+[Pipeline] sh
++ docker build -t manoharn0441/frontend:latest .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 169B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:20
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/6] FROM docker.io/library/node:20@sha256:e391c5561646193be929e3fe55d27234f40a01d867d72b30ae1341b673a3bf4b
+#4 resolve docker.io/library/node:20@sha256:e391c5561646193be929e3fe55d27234f40a01d867d72b30ae1341b673a3bf4b 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 753B done
+#5 DONE 0.1s
+
+#6 [2/6] WORKDIR /app
+#6 CACHED
+
+#7 [3/6] COPY package*.json ./
+#7 CACHED
+
+#8 [4/6] RUN npm install
+#8 CACHED
+
+#9 [5/6] COPY . .
+#9 CACHED
+
+#10 [6/6] RUN npm run build
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers done
+#11 exporting manifest sha256:c6f316a50e690783dd9e2032f53a147494438ff2b6855e484f089e036663ab2c 0.0s done
+#11 exporting config sha256:dcd9c7d45460b643f2feeec26d6cc784ffcf5e660cb98b702cf833d3a802cb91 done
+#11 exporting attestation manifest sha256:2e6a57f8c96ec7a2eb6945451868810d35be9597dc748bcb8cab816d3a82d0b5
+#11 exporting attestation manifest sha256:2e6a57f8c96ec7a2eb6945451868810d35be9597dc748bcb8cab816d3a82d0b5 0.0s done
+#11 exporting manifest list sha256:57a9d0692678f05a4721be604c7158d2bb02ea7b2577de2598776f312eaffe50 0.1s done
+#11 naming to docker.io/manoharn0441/frontend:latest
+#11 naming to docker.io/manoharn0441/frontend:latest done
+#11 unpacking to docker.io/manoharn0441/frontend:latest 0.0s done
+#11 DONE 0.3s
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push Images)
+[Pipeline] withCredentials
+Masking supported pattern matches of $USER or $PASS
+[Pipeline] {
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [PASS, USER]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ echo ****
++ docker login -u **** --password-stdin
+WARNING! Your password will be stored unencrypted in /var/jenkins_home/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
++ docker push ****/auth-service:latest
+The push refers to repository [docker.io/****/auth-service]
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+23dbb9014a16: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+d4e37a990ef9: Waiting
+68d1ebb1fddc: Waiting
+37927ed901b1: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+571f0dac38b5: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+e23f099911d6: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+e23f099911d6: Waiting
+571f0dac38b5: Waiting
+571f0dac38b5: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+cda7f44f2bdd: Waiting
+2cd9a032249f: Waiting
+461077a72fb7: Waiting
+d4e37a990ef9: Pushed
+23dbb9014a16: Pushed
+2cd9a032249f: Pushed
+cda7f44f2bdd: Pushed
+461077a72fb7: Pushed
+68d1ebb1fddc: Pushed
+3697be50c98b: Pushed
+571f0dac38b5: Pushed
+37927ed901b1: Pushed
+c6b30c3f1696: Pushed
+3e6b9d1a9511: Pushed
+79b2f47ad444: Pushed
+e23f099911d6: Pushed
+latest: digest: sha256:8abeff187115648e51d084b4ed6f5c0cc5ed1fd6802da6cea8550c62ba38112a size: 856
++ docker push ****/user-service:latest
+The push refers to repository [docker.io/****/user-service]
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+1458a32e13d0: Waiting
+37927ed901b1: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+eca1b589381c: Waiting
+b4f60d1ea92c: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Waiting
+c6b30c3f1696: Waiting
+37927ed901b1: Mounted from ****/auth-service
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+461077a72fb7: Waiting
+cda7f44f2bdd: Waiting
+461077a72fb7: Mounted from ****/auth-service
+cda7f44f2bdd: Waiting
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+2cd9a032249f: Mounted from ****/auth-service
+c6b30c3f1696: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Mounted from ****/auth-service
+cda7f44f2bdd: Mounted from ****/auth-service
+3697be50c98b: Waiting
+79b2f47ad444: Waiting
+ef8226b38db3: Waiting
+c6b30c3f1696: Mounted from ****/auth-service
+e23f099911d6: Waiting
+3697be50c98b: Mounted from ****/auth-service
+79b2f47ad444: Mounted from ****/auth-service
+e23f099911d6: Mounted from ****/auth-service
+eca1b589381c: Pushed
+ef8226b38db3: Pushed
+b4f60d1ea92c: Pushed
+1458a32e13d0: Pushed
+latest: digest: sha256:8832938bf05954d7598b93f5d43e6a293a13d4639f277fefbcbfce9f0230fd7f size: 856
++ docker push ****/order-service:latest
+The push refers to repository [docker.io/****/order-service]
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+37927ed901b1: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e23f099911d6: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+e23f099911d6: Mounted from ****/user-service
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+57f28debbcc9: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+37927ed901b1: Mounted from ****/user-service
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+3697be50c98b: Waiting
+461077a72fb7: Waiting
+79b2f47ad444: Waiting
+d6273fc41055: Waiting
+2cd9a032249f: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+cda7f44f2bdd: Waiting
+c6b30c3f1696: Waiting
+3e6b9d1a9511: Waiting
+e53848fbb62d: Waiting
+4f96edacb4bf: Waiting
+cda7f44f2bdd: Mounted from ****/user-service
+c6b30c3f1696: Mounted from ****/user-service
+3e6b9d1a9511: Mounted from ****/user-service
+3697be50c98b: Mounted from ****/user-service
+461077a72fb7: Mounted from ****/user-service
+79b2f47ad444: Mounted from ****/user-service
+2cd9a032249f: Mounted from ****/user-service
+d6273fc41055: Pushed
+e53848fbb62d: Pushed
+4f96edacb4bf: Pushed
+57f28debbcc9: Pushed
+latest: digest: sha256:56088fec1ef2662425d649bcc036d6ee8be053b43269d7929fbab76d130f92db size: 856
++ docker push ****/frontend:latest
+The push refers to repository [docker.io/****/frontend]
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+5ccb8d4bd754: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+26fa3468d221: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+286681ad2957: Waiting
+6cf051f1897b: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+a15458351728: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+9d2f29087bcd: Waiting
+fd69b505fbaa: Waiting
+ca4f34bc754e: Waiting
+19780bd51742: Waiting
+74d64e4ff899: Waiting
+286681ad2957: Waiting
+9d2f29087bcd: Waiting
+433fcb066203: Waiting
+83d7ecb29f12: Waiting
+505954b66245: Waiting
+3b8eacc2eb1c: Waiting
+a15458351728: Waiting
+ca4f34bc754e: Waiting
+a15458351728: Pushed
+433fcb066203: Pushed
+286681ad2957: Pushed
+83d7ecb29f12: Pushed
+fd69b505fbaa: Pushed
+ca4f34bc754e: Pushed
+3b8eacc2eb1c: Pushed
+19780bd51742: Pushed
+26fa3468d221: Pushed
+74d64e4ff899: Pushed
+9d2f29087bcd: Pushed
+6cf051f1897b: Pushed
+505954b66245: Pushed
+5ccb8d4bd754: Pushed
+latest: digest: sha256:57a9d0692678f05a4721be604c7158d2bb02ea7b2577de2598776f312eaffe50 size: 856
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to K8s)
+[Pipeline] withCredentials
+Masking supported pattern matches of $KUBECONFIG_FILE
+[Pipeline] {
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [KUBECONFIG_FILE]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ export KUBECONFIG=****
++ kubectl apply -f k8s/
+/var/jenkins_home/workspace/devops-pipeline@tmp/durable-b195cceb/script.sh.copy: 1: kubectl: not found
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ docker logout
+Removing login credentials for https://index.docker.io/v1/
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 127
+Finished: FAILURE

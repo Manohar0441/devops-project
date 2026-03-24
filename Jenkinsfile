@@ -50,10 +50,17 @@ pipeline {
         }
 
         stage('Deploy to K8s') {
+            agent {
+                docker { 
+                    image 'bitnami/kubectl:latest'
+                    // This ensures the container runs as the Jenkins user to avoid permission issues
+                    args '-u root' 
+                }
+            }
             steps {
+                // Ensure the credentialsId matches exactly what you created in Jenkins
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                    // Exporting the KUBECONFIG variable ensures kubectl knows which cluster to use
-                    sh "export KUBECONFIG=${KUBECONFIG_FILE} && kubectl apply -f k8s/"
+                    sh "kubectl --kubeconfig=${KUBECONFIG_FILE} apply -f k8s/"
                 }
             }
         }
