@@ -74,7 +74,7 @@ stage('Deploy to K8s') {
             kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
 
             echo "Deploying..."
-            kubectl --kubeconfig=$KUBECONFIG_FILE apply -f .
+            kubectl --kubeconfig=$KUBECONFIG_FILE apply -f k8s/
             '''
         }
     }
