@@ -14,7 +14,7 @@ pipeline {
         
         stage('Test') {
             steps {
-                echo "Webhook working fine! Starting pipeline..."
+                echo "Webhook working fine! Starting pipeline...."
             }
         }
          
