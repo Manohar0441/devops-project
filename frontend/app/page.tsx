@@ -4,36 +4,50 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- TYPES ---
-interface MenuItem {
+// ---- TYPES ----
+type MenuItem = {
   id: string;
   name: string;
   price: number;
-}
+};
 
-interface CartItem extends MenuItem {
+type CartItem = MenuItem & {
   quantity: number;
-}
+};
 
-interface User {
+type User = {
   id: string;
   name: string;
-}
+};
+
+// ---- HELPERS ----
+const safeString = (value: any, fallback: string) => {
+  if (typeof value === "string" && value.trim() !== "") return value;
+  if (typeof value === "number") return String(value);
+  return fallback;
+};
+
+const normalizeUsers = (data: any): any[] => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.users)) return data.users;
+  if (Array.isArray(data?.data)) return data.data;
+  return [];
+};
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [allUsers, setAllUsers] = useState<User[]>([]); 
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [toast, setToast] = useState<string | null>(null);
 
   const [showMenu, setShowMenu] = useState(false);
   const [showCart, setShowCart] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [dark, setDark] = useState(true);
+
+  const [services, setServices] = useState({
+    auth: "checking",
+    users: "checking",
+    orders: "checking",
+  });
 
   const menu: MenuItem[] = [
     { id: "1", name: "Burger", price: 120 },
@@ -41,267 +55,314 @@ export default function Home() {
     { id: "3", name: "Pasta", price: 180 },
   ];
 
-  // --- INITIAL LOAD ---
   useEffect(() => {
     setMounted(true);
-    fetchUsers(); // 🆕 Call User Service on startup
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
+    fetchUsers();
+    checkServices();
+
+    const interval = setInterval(checkServices, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  // --- API CALLS ---
-
-  // 1. Fetch from User Service
   const fetchUsers = async () => {
     try {
       const res = await axios.get("/api/users");
-      setAllUsers(res.data);
-      // Automatically set the first user as the active user for the demo
-      if (res.data.length > 0) {
-        setCurrentUser(res.data[0]);
-      }
-    } catch (err) {
-      console.error("User Service unreachable via Ingress:", err);
+      const rawUsers = normalizeUsers(res.data);
+
+      const sanitizedUsers: User[] = rawUsers.map((u: any, index: number) => ({
+        id: safeString(u?.id, `user-${index}`),
+        name: safeString(u?.name, "Unknown"),
+      }));
+
+      setAllUsers(sanitizedUsers);
+      if (sanitizedUsers.length > 0) setCurrentUser(sanitizedUsers[0]);
+
+      setServices((s) => ({ ...s, users: "up" }));
+    } catch {
+      setServices((s) => ({ ...s, users: "down" }));
     }
   };
 
-  // 2. Post to Auth Service
-  const handleLogin = async () => {
+  const checkServices = async () => {
     try {
-      setLoading(true);
-      const res = await axios.post("/api/auth/login", loginData);
-      localStorage.setItem("token", res.data.token);
-      setIsLoggedIn(true);
-      playSound(700, 300);
-      setShowLogin(false);
-      setToast("Login Successful");
-    } catch (err) {
-      setToast("Login Failed: Check Auth Service");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setToast(null), 2000);
+      await axios.get("/api/auth/health");
+      setServices((s) => ({ ...s, auth: "up" }));
+    } catch {
+      setServices((s) => ({ ...s, auth: "down" }));
+    }
+
+    try {
+      await axios.get("/api/orders");
+      setServices((s) => ({ ...s, orders: "up" }));
+    } catch {
+      setServices((s) => ({ ...s, orders: "down" }));
     }
   };
 
-  // 3. Post to Order Service
   const placeOrder = async () => {
-    if (!cart.length) return;
-    setLoading(true);
+    if (!cart.length || !currentUser) return;
+
     try {
-      // ✅ Properly hitting the Order Service via Ingress
       await axios.post("/api/orders", {
         id: Date.now().toString(),
         user: currentUser,
         items: cart,
       });
-      setToast("Order Placed Successfully!");
+
       setCart([]);
-      playSound(1000, 200);
       setShowCart(false);
-    } catch (err) {
-      setToast("Order Failed: Check Order Service");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setToast(null), 3000);
-    }
+    } catch {}
   };
 
-  // --- UI LOGIC ---
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setCart([]);
-    setToast("Logged Out");
-    setTimeout(() => setToast(null), 2000);
+  const clearCart = () => setCart([]);
+
+  const increaseQty = (id: string, type: "inc" | "dec") => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity:
+                type === "inc"
+                  ? item.quantity + 1
+                  : Math.max(1, item.quantity - 1),
+            }
+          : item
+      )
+    );
   };
 
   const addToCart = (item: MenuItem) => {
-    playSound(900, 80);
     setCart((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
-        return prev.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
       }
       return [...prev, { ...item, quantity: 1 }];
     });
-    setToast(`${item.name} added`);
-    setTimeout(() => setToast(null), 2000);
-  };
-
-  const playSound = (freq = 600, duration = 120) => {
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.frequency.value = freq;
-      gain.gain.value = 0.05;
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close(); }, duration);
-    } catch {}
   };
 
   if (!mounted) return null;
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  function clearCart(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function increaseQty(id: string): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
-    <div onDoubleClick={() => !isLoggedIn && setShowLogin(true)} className={`${dark ? "bg-zinc-950 text-white" : "bg-zinc-100 text-black"} min-h-screen transition font-sans`}>
-      
-      {/* TOAST NOTIFICATION */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed top-20 left-1/2 -translate-x-1/2 bg-zinc-900 text-white px-6 py-2 rounded-full text-sm shadow-xl z-50">
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="bg-zinc-950 text-white min-h-screen font-sans">
 
-      {/* NAVBAR */}
-      <nav className="fixed top-0 w-full backdrop-blur-md border-b border-zinc-800/50 z-50 px-6 py-4 flex justify-between items-center">
-        <div>
-          {currentUser ? (
-            <span className="text-sm font-medium opacity-80 uppercase tracking-widest">
-              {currentUser.name}’s Terminal
-            </span>
-          ) : (
-            <span className="text-sm opacity-30 animate-pulse">Syncing Services...</span>
-          )}
-        </div>
-        <div className="flex gap-6 items-center">
-          <button onClick={() => setDark(!dark)} className="hover:scale-110 transition">{dark ? "☀️" : "🌙"}</button>
-          {isLoggedIn && (
-            <button onClick={handleLogout} className="text-xs uppercase tracking-tighter opacity-50 hover:opacity-100 transition">Logout</button>
-          )}
-        </div>
+      {/* NAV */}
+      <nav className="p-6 flex justify-between items-center border-b border-zinc-800">
+        <span className="font-bold tracking-wide">MicroOS</span>
+        <span className="text-sm opacity-60">
+          {currentUser ? currentUser.name : "No User"}
+        </span>
       </nav>
 
-      {/* HERO SECTION */}
-      <section className="h-screen flex flex-col justify-center items-center text-center px-4">
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-6xl md:text-8xl font-bold tracking-tighter">
-          MicroOS.
-        </motion.h1>
-        <p className="mt-4 opacity-40 max-w-xs text-sm">A fully networked Kubernetes microservice demonstration.</p>
-        
-        {!isLoggedIn ? (
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-8 text-xs opacity-30 uppercase tracking-[0.2em]">
-            Double click to authenticate
-          </motion.p>
-        ) : (
-          <div className="flex gap-4 mt-10">
-            <button onClick={() => setShowMenu(true)} className="px-8 py-3 bg-white text-black rounded-full font-medium hover:bg-zinc-200 transition">View Menu</button>
-            <button onClick={() => setShowCart(true)} className="px-8 py-3 border border-zinc-700 rounded-full font-medium hover:bg-white/5 transition">
-              Cart ({cart.reduce((n, i) => n + i.quantity, 0)})
-            </button>
-          </div>
-        )}
+      {/* HERO */}
+      <section className="text-center py-24">
+        <h1 className="text-6xl font-bold tracking-tight">MicroOS</h1>
+        <p className="opacity-40 mt-2">Kubernetes Microservices Demo</p>
       </section>
 
-      {/* LOGIN MODAL */}
-      <AnimatePresence>
-        {showLogin && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl w-full max-w-sm space-y-6 shadow-2xl">
-              <div className="space-y-1">
-                <h2 className="text-2xl font-semibold">Security Check</h2>
-                <p className="text-sm opacity-40">Identify yourself to MicroOS</p>
-              </div>
-              <div className="space-y-3">
-                <input placeholder="Username" className="w-full p-4 bg-black rounded-xl border border-zinc-800 focus:border-white outline-none transition" onChange={(e) => setLoginData({ ...loginData, username: e.target.value })} />
-                <input type="password" placeholder="Password" className="w-full p-4 bg-black rounded-xl border border-zinc-800 focus:border-white outline-none transition" onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} />
-              </div>
-              <div className="flex gap-3">
-                <button onClick={() => setShowLogin(false)} className="flex-1 py-4 opacity-50">Cancel</button>
-                <button onClick={handleLogin} className="flex-1 bg-white text-black rounded-xl font-bold py-4 active:scale-95 transition">
-                  {loading ? "..." : "Confirm"}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* CLUSTER STATUS */}
+      <section className="px-6 pb-24 max-w-5xl mx-auto">
+        <h2 className="text-3xl font-semibold mb-8">Cluster Status</h2>
 
-      {/* MENU MODAL */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Object.entries(services).map(([key, status]) => (
+            <div key={key} className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800">
+              <p className="uppercase text-xs opacity-40 mb-2">{key} service</p>
+              <p className={`text-2xl font-bold ${
+                status === "up" ? "text-green-400" : status === "down" ? "text-red-400" : "text-yellow-400"
+              }`}>
+                {status.toUpperCase()}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* BUTTON */}
+      <div className="text-center">
+        <button onClick={() => setShowMenu(true)} className="px-6 py-3 bg-white text-black rounded-full">
+          Open Menu
+        </button>
+      </div>
+
+      {/* 🔥 IMPROVED PREMIUM MENU MODAL (STRUCTURED + CLEAN + BLUR FIX) */}
       <AnimatePresence>
         {showMenu && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] flex justify-center items-center p-4">
-            <motion.div initial={{ y: 50 }} animate={{ y: 0 }} className="bg-zinc-900 text-white p-8 rounded-[2.5rem] w-full max-w-lg space-y-6 shadow-2xl border border-zinc-800">
-              <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight">Catalogue</h2>
-                <button onClick={() => setShowMenu(false)} className="opacity-40">Close</button>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-lg z-[60] flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="bg-zinc-900/95 border border-zinc-800 p-8 rounded-3xl w-full max-w-2xl shadow-2xl"
+            >
+
+              {/* HEADER */}
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-3xl font-bold tracking-tight">Menu</h2>
+                  <p className="text-sm text-zinc-400">Select items from the system</p>
+                </div>
+                <button
+                  onClick={() => setShowMenu(false)}
+                  className="text-sm px-3 py-1 rounded-full border border-zinc-700 hover:bg-white/10 transition"
+                >
+                  Close
+                </button>
               </div>
-              <div className="space-y-4">
+
+              {/* MENU GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2">
                 {menu.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center bg-black/40 p-5 rounded-2xl border border-zinc-800/50">
+                  <div
+                    key={item.id}
+                    className="group flex flex-col justify-between bg-black/40 p-5 rounded-2xl border border-zinc-800 hover:border-white/20 transition"
+                  >
                     <div>
                       <p className="font-semibold text-lg">{item.name}</p>
-                      <p className="text-sm opacity-40">Standard Unit · ₹{item.price}</p>
+                      <p className="text-sm text-zinc-400">Standard Unit</p>
                     </div>
-                    <button onClick={() => addToCart(item)} className="px-6 py-2 bg-white text-black font-bold rounded-full text-sm hover:scale-105 transition">Add</button>
+
+                    <div className="flex justify-between items-center mt-4">
+                      <span className="text-lg font-bold">₹{item.price}</span>
+                      <button
+                        onClick={() => addToCart(item)}
+                        className="px-4 py-2 bg-white text-black rounded-full text-sm font-semibold hover:scale-105 transition"
+                      >
+                        Add
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
-              <button onClick={() => { setShowMenu(false); setShowCart(true); }} className="w-full bg-zinc-800 py-4 rounded-2xl font-medium">Review Cart →</button>
+
+              {/* FOOTER */}
+              <div className="mt-6 pt-4 border-t border-zinc-800 flex justify-between items-center">
+                <p className="text-sm text-zinc-400">
+                  {cart.length} items selected
+                </p>
+
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowCart(true);
+                  }}
+                  className="px-6 py-3 bg-white text-black rounded-full font-semibold hover:scale-105 transition"
+                >
+                  Review Cart →
+                </button>
+              </div>
+
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* CART/ORDER MODAL */}
+      {/* 🔥 IMPROVED CART MODAL (PREMIUM UI) */}
       <AnimatePresence>
         {showCart && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] flex justify-center items-center p-4">
-            <motion.div initial={{ y: 50 }} animate={{ y: 0 }} className="bg-zinc-900 text-white p-8 rounded-[2.5rem] w-full max-w-lg space-y-6 shadow-2xl border border-zinc-800">
-              <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight">Checkout</h2>
-                <button onClick={() => setShowCart(false)} className="opacity-40">Close</button>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-lg z-[70] flex justify-center items-center p-6"
+          >
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              className="bg-zinc-900/95 border border-zinc-800 p-8 rounded-3xl w-full max-w-xl shadow-2xl"
+            >
+
+              {/* HEADER */}
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-3xl font-bold">Cart</h2>
+                  <p className="text-sm text-zinc-400">Review your selected items</p>
+                </div>
+                <button
+                  onClick={() => setShowCart(false)}
+                  className="text-sm px-3 py-1 rounded-full border border-zinc-700 hover:bg-white/10 transition"
+                >
+                  Close
+                </button>
               </div>
 
-              {!cart.length ? (
-                <div className="py-20 text-center opacity-30 italic">No assets selected.</div>
-              ) : (
-                <>
-                  <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
-                    {cart.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center border-b border-zinc-800/50 pb-3">
-                        <div className="flex-1">
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-xs opacity-40">Unit Price: ₹{item.price}</p>
-                        </div>
-                        <div className="flex items-center gap-4 bg-black px-3 py-1 rounded-full border border-zinc-800">
-                          <button onClick={() => increaseQty(item.id)} className="text-lg">-</button>
-                          <span className="font-mono text-sm">{item.quantity}</span>
-                          <button onClick={() => increaseQty(item.id)} className="text-lg">+</button>
-                        </div>
-                        <span className="w-20 text-right font-semibold">₹{item.price * item.quantity}</span>
+              {/* ITEMS */}
+              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                {cart.length === 0 ? (
+                  <p className="text-center text-zinc-500 py-10">Your cart is empty</p>
+                ) : (
+                  cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center bg-black/40 p-4 rounded-2xl border border-zinc-800"
+                    >
+                      <div>
+                        <p className="font-semibold">{item.name}</p>
+                        <p className="text-sm text-zinc-400">₹{item.price} each</p>
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="flex justify-between items-end pt-4">
-                    <span className="text-sm opacity-40 uppercase">Total Payable</span>
-                    <span className="text-4xl font-bold tracking-tighter text-white">₹{total}</span>
-                  </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => increaseQty(item.id, "dec")}
+                          className="px-2 py-1 rounded bg-zinc-800 hover:bg-white/10"
+                        >
+                          -
+                        </button>
 
-                  <div className="flex gap-4 pt-4">
-                    <button onClick={clearCart} className="flex-1 border border-zinc-800 py-4 rounded-2xl opacity-50 hover:opacity-100 transition">Reset</button>
-                    <button onClick={placeOrder} className="flex-[2] bg-white text-black py-4 rounded-2xl font-bold hover:bg-zinc-200 active:scale-95 transition">
-                      {loading ? "Processing..." : "Place Order"}
-                    </button>
-                  </div>
-                </>
-              )}
+                        <span className="font-mono">{item.quantity}</span>
+
+                        <button
+                          onClick={() => increaseQty(item.id, "inc")}
+                          className="px-2 py-1 rounded bg-zinc-800 hover:bg-white/10"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <div className="text-right font-semibold">
+                        ₹{item.price * item.quantity}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* TOTAL + ACTIONS */}
+              <div className="mt-6 pt-4 border-t border-zinc-800 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-zinc-400 uppercase">Total</span>
+                  <span className="text-2xl font-bold">₹{total}</span>
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    onClick={clearCart}
+                    className="flex-1 border border-zinc-700 py-3 rounded-full hover:bg-white/10 transition"
+                  >
+                    Clear
+                  </button>
+
+                  <button
+                    onClick={placeOrder}
+                    className="flex-[2] bg-white text-black py-3 rounded-full font-semibold hover:scale-105 transition"
+                  >
+                    Place Order
+                  </button>
+                </div>
+              </div>
+
             </motion.div>
           </motion.div>
         )}
