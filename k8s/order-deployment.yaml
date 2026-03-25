@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: order-service:v2
-          imagePullPolicy: Never
+          image: manoharn0441/order-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3003

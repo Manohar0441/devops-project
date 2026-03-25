@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         DOCKER_HUB = "manoharn0441"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -77,14 +77,30 @@ stage('Deploy to K8s') {
             sh '''
             echo "Starting kubectl container..."
 
-            # Keep container alive workaround
             sleep 5
 
             echo "Testing cluster..."
             kubectl --kubeconfig=$KUBECONFIG_FILE get nodes
 
-            echo "Deploying..."
+            echo "Applying manifests..."
             kubectl --kubeconfig=$KUBECONFIG_FILE apply -f k8s/
+
+            echo "Updating all services..."
+
+            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/auth-deployment auth=manoharn0441/auth-service:${IMAGE_TAG}
+
+            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/user-deployment user=manoharn0441/user-service:${IMAGE_TAG}
+
+            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/order-deployment order=manoharn0441/order-service:${IMAGE_TAG}
+
+            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/frontend-deployment frontend=manoharn0441/frontend:${IMAGE_TAG}
+
+            echo "Waiting for rollouts..."
+
+            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/auth-deployment
+            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/user-deployment
+            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/order-deployment
+            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/frontend-deployment
             '''
         }
     }
